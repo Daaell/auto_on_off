@@ -9,13 +9,19 @@ namespace Lightpack_auto_on_off
     static class Program
     {
         private static NotifyIcon ni = new NotifyIcon();
-
-
+        private static string appGUID = "8b13263b-891c-45d1-b414-da557c090ff4";
+        private static Mutex app_instance = new Mutex(true, appGUID);
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(){
+            if (!app_instance.WaitOne(TimeSpan.Zero, true)){
+                MessageBox.Show("Lightpack Auto ON/OF is already running!");
+                return;
+            }
+
+
             ni.ContextMenuStrip = GetContext();
             ni.Icon = Properties.Resources.output;
             ni.Visible = true;

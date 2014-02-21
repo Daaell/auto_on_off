@@ -7,3 +7,4 @@ E:\Dropbox\VS2012\Lightpack_auto_on_off\Lightpack_auto_on_off\bin\Debug\libLight
 E:\Dropbox\VS2012\Lightpack_auto_on_off\Lightpack_auto_on_off\bin\Debug\libLightpack.pdb
 E:\Dropbox\VS2012\Lightpack_auto_on_off\Lightpack_auto_on_off\obj\Debug\Lightpack_auto_on_off.exe
 E:\Dropbox\VS2012\Lightpack_auto_on_off\Lightpack_auto_on_off\obj\Debug\Lightpack_auto_on_off.pdb
+E:\Dropbox\VS2012\Lightpack_auto_on_off\Lightpack_auto_on_off\obj\Debug\Lightpack_auto_on_off.csprojResolveAssemblyReference.cache
