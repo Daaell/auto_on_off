@@ -27,6 +27,7 @@ namespace Lightpack_auto_on_off
             ni.Visible = true;
             ni.Text = "Turns Lightpack ON/OFF if you Resume/Suspend your machine.";
             SystemEvents.PowerModeChanged += PMC;
+            SystemEvents.SessionEnding += SE;
             Application.Run();
         }
 
@@ -59,8 +60,14 @@ namespace Lightpack_auto_on_off
             }
         }
 
+        private static void SE(object sender, SessionEndingEventArgs e){
+            ChangeState(Status.Off);
+        }
+
+
         private static void Exit_Click(object sender, EventArgs e){
             SystemEvents.PowerModeChanged -= PMC; 
+            SystemEvents.SessionEnding -= SE;
             Application.Exit();
         }
     }
