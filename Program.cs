@@ -55,8 +55,6 @@ namespace Lightpack_auto_on_off
                     break;
                 case PowerModes.Resume:
                     ChangeState(Status.On);
-                    Thread.Sleep(5000);
-                    ChangeState(Status.On);
                     break;
             }
         }
