@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -15,24 +16,49 @@ namespace Lightpack_auto_on_off
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(){
-            if (!app_instance.WaitOne(TimeSpan.Zero, true)){
+        static void Main()
+        {
+            if (!app_instance.WaitOne(TimeSpan.Zero, true))
+            {
                 MessageBox.Show("Lightpack Auto ON/OF is already running!");
                 return;
             }
 
+            if (getStatus())
+            {
+                ni.ContextMenuStrip = GetContext();
+                ni.Icon = Properties.Resources.output;
+                ni.Visible = true;
+                ni.Text = "Turns Lightpack ON/OFF if you Resume/Suspend your machine.";
+                SystemEvents.PowerModeChanged += PMC;
+                SystemEvents.SessionEnding += SE;
+                Application.Run();
+            }
+        }
 
-            ni.ContextMenuStrip = GetContext();
-            ni.Icon = Properties.Resources.output;
-            ni.Visible = true;
-            ni.Text = "Turns Lightpack ON/OFF if you Resume/Suspend your machine.";
-            SystemEvents.PowerModeChanged += PMC;
-            SystemEvents.SessionEnding += SE;
-            Application.Run();
+        private static bool getStatus()
+        {
+            try
+            {
+                var api = new ApiLightpack("127.0.0.1", 3636);
+                api.Connect();
+                api.Lock();
+                Debug.WriteLine("LP Auto ON/OFF: " + api.GetStatus().ToString());
+                api.UnLock();
+                api.Disconnect();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return false;
+            }
         }
 
 
-        private static void ChangeState(Status input){
+
+        private static void ChangeState(Status input)
+        {
             var api = new ApiLightpack("127.0.0.1", 3636);
             api.Connect();
             api.Lock();
@@ -48,7 +74,9 @@ namespace Lightpack_auto_on_off
             return CMS;
         }
 
-        private static void PMC(object sender, PowerModeChangedEventArgs e){
+        private static void PMC(object sender, PowerModeChangedEventArgs e)
+        {
+            Debug.WriteLine("LP Auto ON/OFF: " + e.Mode.ToString());
             switch (e.Mode)
             {
                 case PowerModes.Suspend:
@@ -60,13 +88,15 @@ namespace Lightpack_auto_on_off
             }
         }
 
-        private static void SE(object sender, SessionEndingEventArgs e){
+        private static void SE(object sender, SessionEndingEventArgs e)
+        {
             ChangeState(Status.Off);
         }
 
 
-        private static void Exit_Click(object sender, EventArgs e){
-            SystemEvents.PowerModeChanged -= PMC; 
+        private static void Exit_Click(object sender, EventArgs e)
+        {
+            SystemEvents.PowerModeChanged -= PMC;
             SystemEvents.SessionEnding -= SE;
             Application.Exit();
         }
